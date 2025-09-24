@@ -1,0 +1,87 @@
+html{
+    box-sizing: border-box;
+    height: 100%
+}
+*,
+*::before,
+*::after{
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+body{
+    align-items: center;
+    background: linear-gradient(120deg,rgb(251, 2, 168), rgb(143, 230, 163), rgb(218, 64, 218));
+    display: flex;
+    font-weight: bold;
+    font-family: 'Dosis', sans-serif;
+    font-display: swap;
+    height: inherit;
+    justify-content: center;
+}
+.wrapper{
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(255,255,255,0.01);
+    border-radius: 16px;
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
+    color: black;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255,255,255,0.675);
+    flex-basis: 400px;
+    height: 540px;
+    padding: 20px 35px;
+}   
+.calc-screen{
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+    background-color: white;
+    color: #232323;
+    border-radius: 10px;
+    text-align: right;
+    padding: 20px;
+    font-size: 35px;
+    box-shadow: 0 4px 30px rgba(35,35,35,0.1);
+    overflow: auto;
+    width: 326px;
+}
+.calc-row{
+    display: flex;
+    justify-content: space-between;
+    margin: 5% 0;
+}
+.calc-button{
+    backdrop-filter: blur(5.5px);
+    -webkit-backdrop-filter: blur(5.5px);
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(35,35,35,0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(35,35,35,0.1);
+    color: black;
+    flex-basis: 20%;
+    font-size: 25px;
+    height: 65px;
+    font-family: inherit;
+}
+.calc-button:last-child{
+    background-color: rgb(235, 175, 64);
+}
+.calc-button:last-child:hover{
+    background-color: rgb(159, 106, 1);
+}
+.calc-button:hover{
+    cursor: pointer;
+    background: rgba(214, 211, 211, 0.675);
+}
+.calc-button:active{
+    transform: scale(0.9);
+    background: rgb(217, 215, 215);
+}
+#large{
+    flex-basis: 47%;
+}
+.calc-button.zero{
+    flex-basis: 73%;
+}
