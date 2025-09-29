@@ -11,7 +11,7 @@ html{
 }
 body{
     align-items: center;
-    background: linear-gradient(120deg,rgb(251, 2, 168), rgb(143, 230, 163), rgb(218, 64, 218));
+    background: linear-gradient(120deg,rgb(3, 255, 255), rgb(84, 87, 89), rgb(163, 163, 163));
     display: flex;
     font-weight: bold;
     font-family: 'Dosis', sans-serif;
