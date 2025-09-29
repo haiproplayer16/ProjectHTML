@@ -8,8 +8,8 @@ function buttonClick(value) {
         handleSymbol(value);
     } else {
         handleNumber(value);
-        screen.innerText = buffer;
     }
+    screen.innerText = buffer;
 }
 function handleSymbol(symbol) {
     switch(symbol) {
@@ -18,7 +18,6 @@ function handleSymbol(symbol) {
             runningTotal = 0;
             previousOperator = null;
             shouldResetBuffer = false;
-            screen.innerText = buffer;
             break;
 
         case '=':
@@ -29,12 +28,11 @@ function handleSymbol(symbol) {
             previousOperator = null;
             buffer = runningTotal.toString();
             runningTotal = 0;
-            screen.innerText = buffer;
-            shouldResetBuffer = true;   // sau "=" thì lần nhập tiếp theo sẽ reset
+            shouldResetBuffer = true;
             break;
 
         case '←':
-            if (shouldResetBuffer) { // nếu vừa "=" thì backspace sẽ clear
+            if (shouldResetBuffer) {
                 buffer = "0";
                 shouldResetBuffer = false;
             } else if (buffer.length === 1) {
@@ -42,9 +40,7 @@ function handleSymbol(symbol) {
             } else {
                 buffer = buffer.substring(0, buffer.length - 1);
             }
-            screen.innerText = buffer;
             break;
-
         case '+':
         case '−':
         case '×':
@@ -64,8 +60,8 @@ function handleMath(symbol) {
         flushOperation(intBuffer);
     }
     previousOperator = symbol;
-    buffer = "0";
-    shouldResetBuffer = false;
+    buffer = symbol;
+    shouldResetBuffer = true; 
 }
 function flushOperation(intBuffer) {
     if (previousOperator === '+') {
@@ -79,12 +75,12 @@ function flushOperation(intBuffer) {
             alert("Không thể chia cho 0!");
             runningTotal = 0;
             buffer = "0";
+            shouldResetBuffer = false;
             return;
         }
         runningTotal /= intBuffer;
     }
 }
-
 function handleNumber(numberString) {
     if (shouldResetBuffer) {
         buffer = (numberString === ".") ? "0." : numberString;
@@ -92,14 +88,14 @@ function handleNumber(numberString) {
         return;
     }
 
-    if (buffer === "0") {
-        buffer = (numberString === ".") ? "0." : numberString;
+    if (numberString === "." && buffer.includes(".")) return;
+
+    if (buffer === "0" && numberString !== ".") {
+        buffer = numberString;
     } else {
-        if (numberString === "." && buffer.includes(".")) return;
         buffer += numberString;
     }
 }
-
 function init() {
     document.querySelector('.calc-buttons')
     .addEventListener('click', function(event) {
