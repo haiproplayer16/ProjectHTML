@@ -35,9 +35,33 @@ function handleSymbol(symbol) {
 
         case '=':
             if (!previousOperator) {
-                return;
+                // Nếu chỉ nhập số rồi bấm =, lấy số đó làm kết quả và lưu vào Ans
+                const intBuffer = getBufferValue();
+                if (intBuffer === "SYNTAX_ERROR") {
+                    buffer = "Syntax Error";
+                    shouldResetBuffer = true;
+                    isAnsBuffer = false;
+                    previousOperator = null;
+                    runningTotal = 0;
+                    break;
+                }
+                buffer = intBuffer.toString();
+                lastAnswer = intBuffer;
+                runningTotal = 0;
+                shouldResetBuffer = true;
+                isAnsBuffer = false;
+                break;
             }
-            const result = flushOperation(getBufferValue());
+            const intBuffer = getBufferValue();
+            if (intBuffer === "SYNTAX_ERROR") {
+                buffer = "Syntax Error";
+                shouldResetBuffer = true;
+                isAnsBuffer = false;
+                previousOperator = null;
+                runningTotal = 0;
+                break;
+            }
+            const result = flushOperation(intBuffer);
             if (result === false) {
                 previousOperator = null;
                 runningTotal = 0;
@@ -75,15 +99,22 @@ function handleSymbol(symbol) {
 }
 
 function handleMath(symbol) {
+    const intBuffer = getBufferValue();
+    if (intBuffer === "SYNTAX_ERROR") {
+        buffer = "Syntax Error";
+        shouldResetBuffer = true;
+        isAnsBuffer = false;
+        previousOperator = null;
+        runningTotal = 0;
+        return;
+    }
     if ((buffer === "0" && previousOperator === null) || buffer === "Ans") {
-        // Cho phép dùng Ans làm toán hạng đầu tiên
         if (buffer === "Ans") {
             runningTotal = lastAnswer;
         } else {
             return;
         }
     } else {
-        const intBuffer = getBufferValue();
         if (runningTotal === 0) {
             runningTotal = intBuffer;
         } else {
@@ -91,12 +122,62 @@ function handleMath(symbol) {
         }
     }
     previousOperator = symbol;
-    buffer = symbol; // Hiển thị dấu lên màn hình
+    buffer = symbol;
     shouldResetBuffer = true;
     isAnsBuffer = false;
 }
 
+function handleNumber(numberString) {
+    // Nếu đang báo lỗi, nhập số sẽ reset về số đó
+    if (buffer === "Syntax Error" || buffer === "Math Error") {
+        buffer = (numberString === ".") ? "0." : numberString;
+        isAnsBuffer = false;
+        shouldResetBuffer = false;
+        return;
+    }
+    if (buffer === "Ans" && numberString === ".") {
+        buffer = "Ans.";
+        isAnsBuffer = true;
+        shouldResetBuffer = false;
+        return;
+    }
+    if (buffer.startsWith("Ans.") && !isNaN(numberString)) {
+        buffer += numberString;
+        isAnsBuffer = true;
+        shouldResetBuffer = false;
+        return;
+    }
+    if (shouldResetBuffer || buffer === "Ans") {
+        buffer = (numberString === ".") ? "0." : numberString;
+        shouldResetBuffer = false;
+        isAnsBuffer = false;
+        return;
+    }
+    if (numberString === "." && buffer.includes(".")) return;
+    if (buffer === "0" && numberString !== ".") {
+        buffer = numberString;
+    } else {
+        buffer += numberString;
+    }
+    isAnsBuffer = false;
+}
+
+function getBufferValue() {
+    // Nếu buffer là "Ans" thì trả về lastAnswer
+    if (buffer === "Ans") return lastAnswer;
+    // Nếu buffer bắt đầu bằng "Ans." thì báo lỗi
+    if (buffer.startsWith("Ans.")) return "SYNTAX_ERROR";
+    // Ngược lại parseFloat(buffer)
+    return parseFloat(buffer);
+}
+
 function flushOperation(intBuffer) {
+    if (intBuffer === "SYNTAX_ERROR") {
+        buffer = "Syntax Error";
+        shouldResetBuffer = true;
+        isAnsBuffer = false;
+        return false;
+    }
     if (previousOperator === '+') {
         runningTotal += intBuffer;
     } else if (previousOperator === '−') {
@@ -113,29 +194,6 @@ function flushOperation(intBuffer) {
         runningTotal /= intBuffer;
     }
     return true;
-}
-
-function handleNumber(numberString) {
-    if (shouldResetBuffer || buffer === "Ans") {
-        buffer = (numberString === ".") ? "0." : numberString;
-        shouldResetBuffer = false;
-        isAnsBuffer = false;
-        return;
-    }
-
-    if (numberString === "." && buffer.includes(".")) return;
-
-    if (buffer === "0" && numberString !== ".") {
-        buffer = numberString;
-    } else {
-        buffer += numberString;
-    }
-    isAnsBuffer = false;
-}
-
-function getBufferValue() {
-    // Nếu buffer là "Ans" thì trả về lastAnswer, ngược lại parseFloat(buffer)
-    return (buffer === "Ans") ? lastAnswer : parseFloat(buffer);
 }
 
 function init() {
